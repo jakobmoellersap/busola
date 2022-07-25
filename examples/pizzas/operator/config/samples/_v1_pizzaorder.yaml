@@ -1,6 +1,18 @@
 apiVersion: busola.example.com/v1
 kind: PizzaOrder
 metadata:
-  name: pizzaorder-sample
+  name: order-45287
 spec:
-  # TODO(user): Add fields here
+  description: "a simple order coming in via deliveroo!"
+  orderDetails:
+    paymentMethod: CARD
+    realization: DELIVERY
+  pizzas:
+    - quantity: 1
+      size: M
+      selectedToppings:
+        - extra-cheese
+      selector:
+        matchLabels:
+          "menu-item.busola.example.com": "Margherita"
+

@@ -1,0 +1,31 @@
+apiVersion: busola.example.com/v1
+kind: Pizza
+metadata:
+  name: pizza-margherita
+  labels:
+    "menu-item.busola.example.com": "Margherita"
+spec:
+  description: Pizza Margherita (more commonly known in English as Margherita pizza) is a typical Neapolitan pizza, made with San Marzano tomatoes, mozzarella cheese, fresh basil, salt, and extra-virgin olive oil.
+  sauce: TOMATO
+  pricing:
+    - size: S
+      price: $8,50
+    - size: M
+      price: $9,50
+    - size: L
+      price: $11,50
+  ingredients:
+    - name: mozzarella-slices
+      price: $0,10
+      quantity: 9
+    - name: fresh-basil
+      price: $0,50
+    - name: olive-oil
+      price: $0,70
+  toppings:
+    - name: extra-cheese
+      price: $2,50
+  cookingTime: 5s
+  comments:
+    - "handle cheese with care"
+  recipeSecret: "much love from italy"

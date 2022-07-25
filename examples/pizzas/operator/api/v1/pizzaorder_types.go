@@ -20,6 +20,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const PizzaOrderFinalizer = "busola.example.com/finalizer/order"
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -32,20 +34,57 @@ type PizzaOrderSpec struct {
 	Description string `json:"description,omitempty"`
 
 	// The details of the order
-	OrderDetails string `json:"orderDetails,omitempty"`
+	OrderDetails `json:"orderDetails,omitempty"`
 
 	// Ordered pizzas
-	Pizzas `json:"pizzas,omitempty"`
+	PizzaTemplates `json:"pizzas,omitempty"`
 }
 
 // Ordered pizzas
-type Pizzas []Pizza
+type PizzaTemplates []PizzaTemplate
+
+type PizzaTemplate struct {
+	Quantity         int                  `json:"quantity,omitempty"`
+	Size             string               `json:"size,omitempty"`
+	Selector         metav1.LabelSelector `json:"selector,omitempty"`
+	SelectedToppings []string             `json:"selectedToppings,omitempty"`
+}
 
 // PizzaOrderStatus defines the observed state of PizzaOrder
 type PizzaOrderStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	State `json:"state,omitempty"`
+
+	Bill `json:"bill,omitempty"`
+
+	Oven `json:"oven,omitempty"`
+
+	// Observed generation
+	// +optional
+	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
+}
+
+type Oven struct {
+	Pizzas []PizzaInOven `json:"pizzas,omitempty"`
+}
+
+type PizzaInOven struct {
+	Name          string `json:"name,omitempty"`
+	PutIntoOvenAt string `json:"putIntoOvenAt,omitempty"`
+	CookingTime   string `json:"cookingTime,omitempty"`
+	Done          bool   `json:"done,omitempty"`
+}
+
+type Bill struct {
+	Items []Billable `json:"items,omitempty"`
+	Sum   string     `json:"sum,omitempty"`
+}
+
+type Billable struct {
+	Name     string `json:"name,omitempty"`
+	Quantity int    `json:"quantity,omitempty"`
+	Price    string `json:"price,omitempty"`
 }
 
 // The details of the order
@@ -79,6 +118,9 @@ const (
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="State",type=string,JSONPath=".status.state"
+//+kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+//+kubebuilder:printcolumn:name="Total",type=string,JSONPath=".status.bill.sum"
 
 // PizzaOrder is the Schema for the pizzaorders API
 type PizzaOrder struct {

@@ -20,17 +20,20 @@ import (
 	"context"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	busolaexamplecomv1 "github.com/kyma-project/busola/examples/pizzas/operator/api/v1"
+	v1 "github.com/kyma-project/busola/examples/pizzas/operator/api/v1"
 )
 
 // PizzaReconciler reconciles a Pizza object
 type PizzaReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	record.EventRecorder
 }
 
 //+kubebuilder:rbac:groups=busola.example.com,resources=pizzas,verbs=get;list;watch;create;update;patch;delete
@@ -47,9 +50,17 @@ type PizzaReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
 func (r *PizzaReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	// check if Pizza exists
+	pizza := &v1.Pizza{}
+	if err := r.Get(ctx, req.NamespacedName, pizza); err != nil {
+		// we'll ignore not-found errors, since they can't be fixed by an immediate
+		// requeue (we'll need to wait for a new notification), and we can get them
+		// on deleted requests.
+		logger.Info(req.NamespacedName.String() + " got deleted!")
+		return ctrl.Result{}, client.IgnoreNotFound(err) //nolint:wrapcheck
+	}
 
 	return ctrl.Result{}, nil
 }

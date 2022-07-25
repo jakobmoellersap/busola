@@ -34,8 +34,16 @@ type PizzaSpec struct {
 	// The name of the sauce to use on our pizza
 	Sauce `json:"sauce,omitempty"`
 
+	// A Pricing Table for the Pizza
+	PricingTable `json:"pricing,omitempty"`
+
+	// List of ingredients for our pizza
+	Ingredients []Ingredient `json:"ingredients,omitempty"`
+
 	// List of toppings for our pizza
-	Toppings `json:"toppings,omitempty"`
+	Toppings []Ingredient `json:"toppings,omitempty"`
+
+	CookingTime string `json:"cookingTime,omitempty"`
 
 	// Additional comments
 	Comments `json:"comments,omitempty"`
@@ -44,13 +52,18 @@ type PizzaSpec struct {
 	RecipeSecret string `json:"recipeSecret,omitempty"`
 }
 
+type PricingTable []Pricing
+type Pricing struct {
+	Size  string `json:"size,omitempty"`
+	Price string `json:"price,omitempty"`
+}
+
 type Sauce string
 
 const GarlicSauce Sauce = "GARLIC"
 const TomatoSauce Sauce = "TOMATO"
 
-type Toppings []Topping
-type Topping struct {
+type Ingredient struct {
 	// The name of the topping
 	Name     string `json:"name,omitempty"`
 	Price    string `json:"price,omitempty"`
@@ -61,8 +74,12 @@ type Comments []string
 
 // PizzaStatus defines the observed state of Pizza
 type PizzaStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// State is the state of the Pizza
+	State `json:"state,omitempty"`
+
+	// Observed generation
+	// +optional
+	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
 }
 
 //+kubebuilder:object:root=true
