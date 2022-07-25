@@ -1,0 +1,23 @@
+domain: busola.example.com
+layout:
+- go.kubebuilder.io/v3
+projectName: operator
+repo: github.com/kyma-project/busola/examples/pizzas/operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: busola.example.com
+  kind: PizzaOrder
+  path: github.com/kyma-project/busola/examples/pizzas/operator/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: busola.example.com
+  kind: Pizza
+  path: github.com/kyma-project/busola/examples/pizzas/operator/api/v1
+  version: v1
+version: "3"
